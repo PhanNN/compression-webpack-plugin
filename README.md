@@ -47,6 +47,7 @@ module.exports = {
 |**[`threshold`](#threshold)**|`{Number}`|`0`|Only assets bigger than this size are processed. In bytes.|
 |**[`minRatio`](#minratio)**|`{Number}`|`0.8`|Only assets that compress better than this ratio are processed|
 |**[`deleteOriginalAssets`](#deleteoriginalassets)**|`{Boolean}`|`false`|Whether to delete the original assets or not|
+|**[`useOriginalName`](#useOriginalName)**|`{Boolean}`|`false`|Whether to use the original assets or not - if it is assigned with `true` value, we don't care the option #deleteoriginalassets|
 
 ### `test`
 
