@@ -24,6 +24,7 @@ class CompressionPlugin {
       threshold = 0,
       minRatio = 0.8,
       deleteOriginalAssets = false,
+      useOriginalName = false,
     } = options;
 
     this.options = {
@@ -37,6 +38,7 @@ class CompressionPlugin {
       threshold,
       minRatio,
       deleteOriginalAssets,
+      useOriginalName,
     };
 
     if (typeof algorithm === 'string') {
@@ -62,7 +64,7 @@ class CompressionPlugin {
 
   apply(compiler) {
     compiler.plugin('emit', (compilation, callback) => {
-      const { cache, threshold, minRatio, asset: assetName, filename, deleteOriginalAssets } = this.options;
+      const { cache, threshold, minRatio, asset: assetName, filename, deleteOriginalAssets, useOriginalName } = this.options;
       const cacheDir = cache === true ? findCacheDir({ name: 'compression-webpack-plugin' }) : cache;
 
       const { assets } = compilation;
@@ -124,15 +126,19 @@ class CompressionPlugin {
               query: parse.query || '',
             };
 
-            let newAssetName = assetName.replace(/\[(file|path|query)\]/g, (p0, p1) => sub[p1]);
+            if (useOriginalName) {
+              assets[file] = new RawSource(result);
+            } else {
+              let newAssetName = assetName.replace(/\[(file|path|query)\]/g, (p0, p1) => sub[p1]);
 
-            if (typeof filename === 'function') {
-              newAssetName = filename(newAssetName);
+              if (typeof filename === 'function') {
+                newAssetName = filename(newAssetName);
+              }
+
+              assets[newAssetName] = new RawSource(result);
             }
 
-            assets[newAssetName] = new RawSource(result);
-
-            if (deleteOriginalAssets) {
+            if (!useOriginalName && deleteOriginalAssets) {
               delete assets[file];
             }
 
